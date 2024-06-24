@@ -17,7 +17,8 @@ def generate_kmers(data, k):
     kmers = []
     for i in range(len(data)-k+1):
         kmers.append(data[i:i+k])
-    return sorted(kmers)
+    kmers.sort()
+    return kmers
 
 def write_data(kmers):
     with open('output.txt', 'w') as file:

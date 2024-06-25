@@ -7,7 +7,10 @@ def assembler(kmers):
     genome = kmers[0]
     k = len(kmers[0])
     for i in range(1, len(kmers)):
-        genome += kmers[i][-k]
+        for j in range(k - 1, 0, -1):
+            if genome.endswith(kmers[i][:j]):
+                genome += kmers[i][j:]
+                break
     return genome
 
 def write_data(genome):

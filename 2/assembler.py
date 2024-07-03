@@ -1,5 +1,5 @@
 def read_data():
-    with open('output.txt', 'r') as file:
+    with open('2/input.txt', 'r') as file:
         kmers = file.readline().strip().split(',')
     return kmers
 
@@ -38,7 +38,7 @@ def assembler(kmers):
     return genome
 
 def write_data(genome):
-    with open('CayoCardoso.txt', 'w') as file:
+    with open('2/CayoCardoso.txt', 'w') as file:
         file.write(genome)
 
 def main():

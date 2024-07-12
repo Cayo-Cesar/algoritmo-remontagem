@@ -29,7 +29,7 @@ class DNAAssembler:
 
         return best_sobreposition_len, best_kmer_index
 
-    def assemble(self):
+    def assembler(self):
         self.genome = self.kmers.pop(0)
         while self.kmers:
             best_sobreposition_len, best_kmer_index = self.best_sobreposition(self.genome, self.kmers)
@@ -54,7 +54,7 @@ class DNAAssembler:
 
     def run(self):
         self.read_data()
-        self.assemble()
+        self.assembler()
         self.write_data()
 
 if __name__ == '__main__':

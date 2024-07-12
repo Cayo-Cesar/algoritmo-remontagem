@@ -25,7 +25,7 @@ class KmerGenerator:
         self.write_data()
 
 if __name__ == '__main__':
-    input_path = 'inputs-outputs/input-question1.txt'  # Ajuste o caminho conforme necessário
-    output_path = 'inputs-outputs/output-question1.txt'  # Ajuste o caminho conforme necessário
+    input_path = 'inputs-outputs/input-question1.txt' 
+    output_path = 'inputs-outputs/output-question1.txt'  
     generator = KmerGenerator(input_path, output_path)
     generator.run()

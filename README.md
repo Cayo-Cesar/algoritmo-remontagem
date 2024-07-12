@@ -1,6 +1,6 @@
 # Algoritmo de Remontagem de DNA
 
-Este projeto implementa um algoritmo para a remontagem de sequências de DNA a partir de k-mers, pequenos segmentos de DNA, utilizando técnicas de bioinformática.
+Este projeto implementa um algoritmo que transforma uma sequencia de DNA em k-mers para a remontagem do DNA, utilizando técnicas de bioinformática.
 
 ## Funcionalidades
 

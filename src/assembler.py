@@ -135,8 +135,8 @@ class DNAAssembler:
                 print("Nenhum kmer válido encontrado")
                 self.genome += self.kmers.pop()
             else:
-                # Adiciona o kmer ao genoma
                 if best_sobreposition_len > 0:
+                    # Adiciona o kmer ao genoma de acordo com a sobreposição
                     if self.genome.endswith(best_kmer[:best_sobreposition_len]):
                         self.genome += best_kmer[best_sobreposition_len:]
                     else:
@@ -144,6 +144,7 @@ class DNAAssembler:
                 else:
                     self.genome += best_kmer
 
+            # Remove o kmer adicionado da lista de kmers
                 self.kmers.remove(best_kmer)
 
     def write_data(self):

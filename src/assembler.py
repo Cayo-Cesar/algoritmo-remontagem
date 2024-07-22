@@ -73,11 +73,11 @@ class DNAAssembler:
                 self.kmers.append(kmer)
 
         # Preenche o dicionário com prefixos e sufixos
-        self.kmer_dict = {}
-        for kmer in kmers_list:
-            prefix = kmer[:-1]
-            suffix = kmer[1:]
-            if prefix not in self.kmer_dict:
+        self.kmer_dict = {} # Dicionario que mapeia prefixos e sufixos para kmers
+        for kmer in kmers_list: # Para cada kmer, adiciona o prefixo e o sufixo ao dicionário
+            prefix = kmer[:-1] 
+            suffix = kmer[1:] 
+            if prefix not in self.kmer_dict: # Se o prefixo ou o sufixo não estiverem no dicionário, adiciona-os
                 self.kmer_dict[prefix] = []
             if suffix not in self.kmer_dict:
                 self.kmer_dict[suffix] = []
@@ -91,7 +91,7 @@ class DNAAssembler:
         k = len(next(iter(self.kmers)))  # Assume que todos os kmers têm o mesmo tamanho
 
         # Verifica sobreposição com o sufixo do genoma
-        suffix = genome[-(k-1):]
+        suffix = genome[-(k-1):] 
         if suffix in self.kmer_dict:
             for kmer in self.kmer_dict[suffix]:
                 if kmer not in self.kmers:
@@ -121,16 +121,21 @@ class DNAAssembler:
         if self.kmers.is_empty():
             raise ValueError("Nenhum kmer disponível para montagem.")
         
+        # Inicializa o genoma com um kmer aleatório
         self.genome = self.kmers.pop()
         
+        # Enquanto houver kmers disponíveis, tenta adicionar um kmer ao genoma
         while not self.kmers.is_empty():
+            # Chama a função best_sobreposition para encontrar o melhor kmer a ser adicionado
             best_sobreposition_len, best_kmer = self.best_sobreposition(self.genome)
             print(f"Melhor comprimento de sobreposição: {best_sobreposition_len}, Melhor kmer: {best_kmer}")
 
+            # Se não houver um kmer válido, adiciona um kmer aleatório ao genoma
             if not best_kmer:
                 print("Nenhum kmer válido encontrado")
                 self.genome += self.kmers.pop()
             else:
+                # Adiciona o kmer ao genoma
                 if best_sobreposition_len > 0:
                     if self.genome.endswith(best_kmer[:best_sobreposition_len]):
                         self.genome += best_kmer[best_sobreposition_len:]

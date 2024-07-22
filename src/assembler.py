@@ -1,18 +1,80 @@
-from collections import deque
+class Node:
+    #Classe que representa um nó na lista encadeada.
+    def __init__(self, value=None):
+        self.value = value
+        self.next = None
+
+class LinkedList:
+    #Classe que representa uma lista encadeada.
+    def __init__(self):
+        self.head = None
+        self.tail = None
+
+    def append(self, value):
+        #Adiciona um novo nó ao final da lista.
+        new_node = Node(value)
+        if not self.head:
+            self.head = self.tail = new_node
+        else:
+            self.tail.next = new_node
+            self.tail = new_node
+
+    def pop(self):
+        #Remove e retorna o primeiro nó da lista.
+        if not self.head:
+            return None
+        value = self.head.value
+        self.head = self.head.next
+        if not self.head:
+            self.tail = None
+        return value
+
+    def remove(self, value):
+        #Remove um nó da lista com o valor especificado.
+        current = self.head
+        previous = None
+        while current:
+            if current.value == value:
+                if previous:
+                    previous.next = current.next
+                else:
+                    self.head = current.next
+                if current == self.tail:
+                    self.tail = previous
+                return
+            previous = current
+            current = current.next
+
+    def is_empty(self):
+        #Verifica se a lista está vazia.
+        return self.head is None
+
+    def __iter__(self):
+        #Permite a iteração sobre os nós da lista.
+        current = self.head
+        while current:
+            yield current.value
+            current = current.next
 
 class DNAAssembler:
     def __init__(self, input_file, output_file):
         self.input_file = input_file
         self.output_file = output_file
-        self.kmers = deque()
+        self.kmers = LinkedList()
         self.genome = ""
         self.kmer_dict = {}
 
     def read_data(self):
+        #Lê os kmers do arquivo de entrada e inicializa o dicionário de kmers.
         with open(self.input_file, 'r') as file:
-            self.kmers = deque(file.readline().strip().split(','))
+            kmers_line = file.readline().strip()
+            kmers_list = kmers_line.split(',')
+            for kmer in kmers_list:
+                self.kmers.append(kmer)
 
-        for kmer in self.kmers:
+        # Preenche o dicionário com prefixos e sufixos
+        self.kmer_dict = {}
+        for kmer in kmers_list:
             prefix = kmer[:-1]
             suffix = kmer[1:]
             if prefix not in self.kmer_dict:
@@ -22,60 +84,70 @@ class DNAAssembler:
             self.kmer_dict[prefix].append(kmer)
             self.kmer_dict[suffix].append(kmer)
 
-    def best_overlap(self, genome):
-        best_overlap_len = 0
+    def best_sobreposition(self, genome):
+        #Encontra o kmer que tem a melhor sobreposição com o genoma atual.
+        best_sobreposition_len = 0
         best_kmer = None
-        k = len(self.kmers[0])
+        k = len(next(iter(self.kmers)))  # Assume que todos os kmers têm o mesmo tamanho
 
+        # Verifica sobreposição com o sufixo do genoma
         suffix = genome[-(k-1):]
         if suffix in self.kmer_dict:
             for kmer in self.kmer_dict[suffix]:
-                overlap_len = len(suffix)
                 if kmer not in self.kmers:
                     continue
-                if genome.endswith(kmer[:overlap_len]):
-                    if overlap_len > best_overlap_len:
-                        best_overlap_len = overlap_len
+                sobreposition_len = len(suffix)
+                if genome.endswith(kmer[:sobreposition_len]):
+                    if sobreposition_len > best_sobreposition_len:
+                        best_sobreposition_len = sobreposition_len
                         best_kmer = kmer
 
+        # Verifica sobreposição com o prefixo do genoma
         prefix = genome[:k-1]
         if prefix in self.kmer_dict:
             for kmer in self.kmer_dict[prefix]:
-                overlap_len = len(prefix)
                 if kmer not in self.kmers:
                     continue
-                if genome.startswith(kmer[-overlap_len:]):
-                    if overlap_len > best_overlap_len:
-                        best_overlap_len = overlap_len
+                sobreposition_len = len(prefix)
+                if genome.startswith(kmer[-sobreposition_len:]):
+                    if sobreposition_len > best_sobreposition_len:
+                        best_sobreposition_len = sobreposition_len
                         best_kmer = kmer
 
-        return best_overlap_len, best_kmer
+        return best_sobreposition_len, best_kmer
 
     def assembler(self):
-        self.genome = self.kmers.popleft()
-        while self.kmers:
-            best_overlap_len, best_kmer = self.best_overlap(self.genome)
-            print(f"Best overlap length: {best_overlap_len}, Best kmer: {best_kmer}")
+        #Montagem do genoma a partir dos kmers usando sobreposição.
+        if self.kmers.is_empty():
+            raise ValueError("Nenhum kmer disponível para montagem.")
+        
+        self.genome = self.kmers.pop()
+        
+        while not self.kmers.is_empty():
+            best_sobreposition_len, best_kmer = self.best_sobreposition(self.genome)
+            print(f"Melhor comprimento de sobreposição: {best_sobreposition_len}, Melhor kmer: {best_kmer}")
 
             if not best_kmer:
-                print("No valid kmer found")
-                self.genome += self.kmers.popleft()
+                print("Nenhum kmer válido encontrado")
+                self.genome += self.kmers.pop()
             else:
-                if best_overlap_len > 0:
-                    if self.genome.endswith(best_kmer[:best_overlap_len]):
-                        self.genome += best_kmer[best_overlap_len:]
+                if best_sobreposition_len > 0:
+                    if self.genome.endswith(best_kmer[:best_sobreposition_len]):
+                        self.genome += best_kmer[best_sobreposition_len:]
                     else:
-                        self.genome = best_kmer[:-best_overlap_len] + self.genome
+                        self.genome = best_kmer[:-best_sobreposition_len] + self.genome
                 else:
                     self.genome += best_kmer
 
                 self.kmers.remove(best_kmer)
 
     def write_data(self):
+        #Escreve o genoma montado no arquivo de saída.
         with open(self.output_file, 'w') as file:
             file.write(self.genome)
 
     def run(self):
+        #Executa o processo completo de montagem do genoma.
         self.read_data()
         self.assembler()
         self.write_data()

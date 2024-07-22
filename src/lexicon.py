@@ -6,23 +6,19 @@ class KmerGenerator:
         self.k = 0
         self.kmers = []
 
-    # Read data from input file
     def read_data(self):
         with open(self.input_file, 'r') as file:
             self.data = file.readline().strip()
             self.k = int(file.readline().strip())
 
-    # Generate kmers from data
     def generate_kmers(self):
         self.kmers = [self.data[i:i+self.k] for i in range(len(self.data) - self.k + 1)]
         self.kmers.sort()
 
-    # Write kmers to output file
     def write_data(self):
         with open(self.output_file, 'w') as file:
             file.write(','.join(self.kmers))
 
-    # Run the generator
     def run(self):
         self.read_data()
         self.generate_kmers()

@@ -81,8 +81,8 @@ class DNAAssembler:
                 self.kmer_dict[prefix] = []
             if suffix not in self.kmer_dict:
                 self.kmer_dict[suffix] = []
-            self.kmer_dict[prefix].append(kmer)
-            self.kmer_dict[suffix].append(kmer)
+            self.kmer_dict[prefix].append(kmer) # Adiciona o kmer à lista de kmers associados ao prefixo
+            self.kmer_dict[suffix].append(kmer) # Adiciona o kmer à lista de kmers associados ao sufixo
 
     def best_sobreposition(self, genome):
         #Encontra o kmer que tem a melhor sobreposição com o genoma atual.
@@ -92,13 +92,13 @@ class DNAAssembler:
 
         # Verifica sobreposição com o sufixo do genoma
         suffix = genome[-(k-1):] 
-        if suffix in self.kmer_dict:
-            for kmer in self.kmer_dict[suffix]:
-                if kmer not in self.kmers:
+        if suffix in self.kmer_dict: # Se o sufixo estiver no dicionário, verifica a sobreposição com os kmers associados
+            for kmer in self.kmer_dict[suffix]: # Para cada kmer associado ao sufixo
+                if kmer not in self.kmers: 
                     continue
-                sobreposition_len = len(suffix)
-                if genome.endswith(kmer[:sobreposition_len]):
-                    if sobreposition_len > best_sobreposition_len:
+                sobreposition_len = len(suffix) # Calcula o comprimento da sobreposição
+                if genome.endswith(kmer[:sobreposition_len]): # Se o genoma terminar com o sufixo do kmer
+                    if sobreposition_len > best_sobreposition_len: # Se a sobreposição for maior que a melhor sobreposição encontrada até agora
                         best_sobreposition_len = sobreposition_len
                         best_kmer = kmer
 

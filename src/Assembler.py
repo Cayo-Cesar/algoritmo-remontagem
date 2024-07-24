@@ -74,24 +74,31 @@ class DNAAssembler:
         for node in self.graph:
             if self.out_degrees[node] > self.in_degrees[node]:
                 # Se o nó tem mais arestas de saída do que de entrada, é um bom candidato a nó inicial
+                # Pois é mais provável que seja o início do caminho Euleriano
                 return node
             if self.out_degrees[node] == self.in_degrees[node] and start_node is None:
                 # Se os graus de entrada e saída são iguais, também pode ser um candidato
+                # Neste caso, ele pode ser um candidato, mas nao é retornado de imediato ele é armazenado para ser retornado caso não seja encontrado outro nó
                 start_node = node
         return start_node
 
     def assemble_genome(self):
         # Monta o genoma usando o grafo de De Bruijn
         if not self.graph:
-            raise ValueError("Nenhum kmer disponível para montagem.")
+            print("Nenhum kmer disponível para montagem.")
+            return
 
+        # Encontra o nó inicial para começar a montagem
         start_node = self.find_start_node()
         if start_node is None:
-            raise ValueError("Não foi possível determinar o nó inicial para a montagem.")
+            print("Não foi possível determinar o nó inicial para a montagem.")
+            return
 
+        # Inicializa a pilha e a lista encadeada para armazenar o caminho Euleriano
         stack = [start_node]  # Inicializa a pilha com o nó inicial
         path = LinkedList()  # Lista encadeada para armazenar o caminho Euleriano
 
+        # Realiza a busca em profundidade para montar o caminho Euleriano
         while stack:
             current = stack[-1]  # Obtém o nó no topo da pilha
             if self.graph[current]:

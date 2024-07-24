@@ -102,13 +102,14 @@ class DNAAssembler:
         while stack:
             current = stack[-1]  # Obtém o nó no topo da pilha
             if self.graph[current]:
-                # Se o nó atual tem vizinhos não visitados, adiciona o próximo nó à pilha
+                # Se o nó atual tem vizinhos não visitados, remove a aresta entre os nós e adiciona o próximo nó à pilha
                 next_node = self.graph[current].pop()
                 stack.append(next_node)
             else:
                 # Se todos os vizinhos foram visitados, adiciona o nó atual ao caminho
                 path.append(stack.pop())
 
+        # Monta o genoma a partir do caminho Euleriano
         self.genome = path.pop()  # Inicializa o genoma com o primeiro nó do caminho
         for node in path:
             self.genome += node[-1]  # Constrói o genoma a partir do caminho

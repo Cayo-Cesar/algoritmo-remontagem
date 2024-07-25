@@ -11,6 +11,7 @@ class KmerGenerator:
             self.data = file.readline().strip()
             self.k = int(file.readline().strip())
 
+
     # Gera os kmers a partir da sequência de DNA
     def generate_kmers(self):
         # Gerar todos os kmers de tamanho k da sequência de DNA
